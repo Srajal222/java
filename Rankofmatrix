@@ -1,0 +1,68 @@
+import java.util.Scanner;
+
+public class Rankofmatrix {
+
+    static final double EPSILON = 1e-8;
+
+    public static int rankOfMatrix(double[][] mat, int R, int C) {
+        int rank = C;
+
+        for (int row = 0; row < rank; row++) {
+            // If the diagonal element is not zero
+            if (Math.abs(mat[row][row]) > EPSILON) {
+                for (int col = 0; col < R; col++) {
+                    if (col != row) {
+                        double mult = mat[col][row] / mat[row][row];
+                        for (int i = 0; i < rank; i++) {
+                            mat[col][i] -= mult * mat[row][i];
+                        }
+                    }
+                }
+            } else {
+                boolean reduce = true;
+
+                // Try to swap with a lower row
+                for (int i = row + 1; i < R; i++) {
+                    if (Math.abs(mat[i][row]) > EPSILON) {
+                        double[] temp = mat[row];
+                        mat[row] = mat[i];
+                        mat[i] = temp;
+                        reduce = false;
+                        break;
+                    }
+                }
+
+                // If no non-zero element found, reduce rank
+                if (reduce) {
+                    rank--;
+                    for (int i = 0; i < R; i++) {
+                        mat[i][row] = mat[i][rank];
+                    }
+                }
+                row--;
+            }
+        }
+        return rank;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of rows: ");
+        int R = sc.nextInt();
+
+        System.out.print("Enter number of columns: ");
+        int C = sc.nextInt();
+
+        double[][] mat = new double[R][C];
+
+        // rank of matrix to your matrix rank
+        System.out.println("Enter matrix elements:-");
+        for (int i = 0; i < R; i++)
+            for (int j = 0; j < C; j++)
+                mat[i][j] = sc.nextDouble();
+
+        int rank = rankOfMatrix(mat, R, C);
+        System.out.println("Rank of the matrix is:- " + rank);
+    }
+}
